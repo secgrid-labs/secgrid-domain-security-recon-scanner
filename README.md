@@ -1,70 +1,21 @@
-# 🛡️ SecGrid Domain Security, SSL & Recon Scanner
+# SecGrid Domain Security Scanner
 
-[![Apify Actor](https://img.shields.io/badge/Apify_Store-Run_Actor-00C853?style=for-the-badge&logo=apify)](https://apify.com/secgrid/secgrid-domain-security-recon-scanner)
-[![Security Grade](https://img.shields.io/badge/Security_Audit-A%2B_to_F-blue?style=for-the-badge)](https://apify.com/secgrid/secgrid-domain-security-recon-scanner)
+[![Run on Apify](https://img.shields.io/badge/Apify_Store-Run_Actor-00C853?style=for-the-badge&logo=apify)](https://apify.com/secgrid/secgrid-domain-security-recon-scanner)
 [![Maintained by SecGrid Labs](https://img.shields.io/badge/Maintained_by-SecGrid_Labs-1E293B?style=for-the-badge)](https://apify.com/secgrid)
 
-**SecGrid Domain Security, SSL & Recon Scanner** is an enterprise-grade, high-speed intelligence utility engineered by **SecGrid Labs**. It audits target domains at scale for SSL/TLS certificate validity, HTTP security headers, server infrastructure, web technology stacks, and public B2B contact intelligence.
+An [Apify](https://apify.com) Actor that checks many domains in one run and returns an **A+ to F security grade**, SSL/TLS certificate details, security headers, a technology-stack guess and public contact information from the homepage.
 
-👉 **[Run this Actor live on the Apify Store](https://apify.com/secgrid/secgrid-domain-security-recon-scanner)**  
-👉 **[Try the Pre-Configured Example Task](https://apify.com/secgrid/secgrid-domain-security-recon-scanner/examples/secgrid-domain-security-recon-scanner-task)**
+**[Run it on the Apify Store](https://apify.com/secgrid/secgrid-domain-security-recon-scanner)**
 
----
+## What it does
 
-## 🚀 Key Capabilities
+- **Security grade (A+ to F):** valid SSL/TLS certificate (40 points) plus 6 security headers (10 points each): `Strict-Transport-Security`, `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`.
+- **SSL/TLS details:** certificate valid or not, issuer, days until expiry, TLS version.
+- **Infrastructure hints:** IPv4 address, server banner, and technology hints (Cloudflare, Nginx, Apache, Vercel, Next.js, WordPress and others).
+- **Homepage contacts (optional):** public email addresses and social profile links found on the homepage. Emails are **not verified**.
+- **Integrations:** JSON, CSV and Excel export, Apify API, Make, n8n, Zapier.
 
-* **Institutional Security Grading (`A+` to `F`):** Evaluates SSL/TLS status alongside 6 core HTTP security headers (`Strict-Transport-Security`, `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`).
-* **SSL/TLS Certificate Intelligence:** Extracts certificate issuer, validity state, and exact **days remaining until expiration** to prevent downtime.
-* **Tech-Stack & Infrastructure Recon:** Resolves underlying IPv4 addresses, server software banners, and web frameworks (`Cloudflare`, `Nginx`, `Apache`, `Vercel`, `Next.js`, `Shopify`, `WordPress`, `Google Tag Manager`).
-* **B2B Lead & Social Extraction:** Crawls target landing pages to harvest verified public business contact emails and official social media profiles (`LinkedIn`, `X/Twitter`, `Facebook`, `Instagram`).
-* **AI & Automation Ready:** Seamlessly integrates with **Claude (MCP), Cursor, n8n, Make, Zapier**, and REST APIs.
-
----
-
-## 📊 Sample Output (JSON)
-
-```json
-[
-  {
-    "domain": "cloudflare.com",
-    "security_grade": "A+",
-    "security_score": "100/100",
-    "http_status": 200,
-    "ip_address": "104.16.133.229",
-    "ssl_valid": true,
-    "ssl_days_remaining": 42,
-    "ssl_issuer": "Google Trust Services",
-    "detected_technologies": [
-      "Cloudflare",
-      "Google Tag Manager / Analytics",
-      "Shopify"
-    ],
-    "server_software": "cloudflare",
-    "public_emails": [],
-    "social_profiles": {
-      "linkedin": "[https://www.linkedin.com/company/cloudflare](https://www.linkedin.com/company/cloudflare)",
-      "twitter_x": "[https://x.com/cloudflare](https://x.com/cloudflare)"
-    },
-    "security_headers_present": [
-      "Strict-Transport-Security",
-      "Content-Security-Policy",
-      "X-Frame-Options",
-      "X-Content-Type-Options",
-      "Referrer-Policy",
-      "Permissions-Policy"
-    ],
-    "security_headers_missing": [],
-    "page_title": "Cloudflare: Build for the agent era",
-    "audited_at_utc": "2026-10-23T20:35:11.451407+00:00"
-  }
-]
-```
-
----
-
-## ⚡ Quick Start via Apify API (Python)
-
-You can trigger this scanner programmatically using the official `apify-client` package:
+## Quick start (Python)
 
 ```python
 from apify_client import ApifyClient
@@ -80,13 +31,40 @@ run_input = {
 run = client.actor("secgrid/secgrid-domain-security-recon-scanner").call(run_input=run_input)
 
 for item in client.dataset(run["defaultDatasetId"]).iterate_items():
-    print(item)
+    print(item["domain"], item["security_grade"], item["ssl_days_remaining"])
 ```
 
----
+## Example output (illustrative values)
 
-## 📫 Support & Enterprise Inquiries
+```json
+{
+  "domain": "example.com",
+  "security_grade": "B",
+  "security_score": "70/100",
+  "http_status": 200,
+  "ip_address": "203.0.113.10",
+  "ssl_valid": true,
+  "ssl_issuer": "Let's Encrypt",
+  "ssl_days_remaining": 61,
+  "detected_technologies": ["Nginx"],
+  "security_headers_present": ["Strict-Transport-Security", "X-Content-Type-Options", "Referrer-Policy"],
+  "security_headers_missing": ["Content-Security-Policy", "X-Frame-Options", "Permissions-Policy"],
+  "public_emails": ["info@example.com"],
+  "social_profiles": { "linkedin": "https://www.linkedin.com/company/example" },
+  "page_title": "Example Domain",
+  "audited_at_utc": "2026-01-01T12:00:00+00:00"
+}
+```
 
-Need a custom web scraper, dedicated security pipeline, or higher rate limits?  
-* **Email:** `secgrid.support@gmail.com`  
-* **Apify Profile:** [apify.com/secgrid](https://apify.com/secgrid)
+## Good to know
+
+- The grade is a quick first look. It checks whether headers are present, not how strong their values are, and it does not check SPF/DMARC or old TLS versions.
+- Technology detection is based on hints and can be wrong.
+- It is a passive outside-in check: one DNS lookup, one TLS connection and one page request per domain.
+- Only check domains you own, manage or have a legitimate reason to assess.
+
+## Support
+
+Open an issue here or on the Actor page, or email **secgrid.support@gmail.com**. We reply within 1 to 2 business days.
+
+Built by [SecGrid Labs](https://apify.com/secgrid).
